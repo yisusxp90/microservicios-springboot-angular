@@ -13,4 +13,6 @@ public interface IExamenService extends IGenericService<Examen> {
     Iterable<Asignatura> findAllAsignaturas();
 
     Asignatura saveAsignatura(Asignatura asignatura);
+
+    Iterable<Long> findExamenesIdsConRespuestasByPreguntIds(Iterable<Long> preguntaIds);
 }

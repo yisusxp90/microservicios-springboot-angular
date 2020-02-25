@@ -35,4 +35,10 @@ public class ExamenServiceImpl extends GenericServiceImpl<Examen, IExamenReposit
     public Asignatura saveAsignatura(Asignatura asignatura) {
         return iAsignaturaRepository.save(asignatura);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Iterable<Long> findExamenesIdsConRespuestasByPreguntIds(Iterable<Long> preguntaIds) {
+        return repository.findExamenesIdsConRespuestasByPreguntIds(preguntaIds);
+    }
 }

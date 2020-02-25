@@ -2,8 +2,10 @@ package com.microservicios.yisusxp.usuarios.service.impl;
 
 import com.microservicios.yisusxp.commons.model.Alumno;
 import com.microservicios.yisusxp.commons.service.impl.GenericServiceImpl;
+import com.microservicios.yisusxp.usuarios.client.ICursoFeignClient;
 import com.microservicios.yisusxp.usuarios.repository.IAlumnoRepository;
 import com.microservicios.yisusxp.usuarios.service.IAlumnoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,11 +14,30 @@ import java.util.List;
 @Service
 public class AlumnoServiceImpl extends GenericServiceImpl<Alumno, IAlumnoRepository> implements IAlumnoService {
 
+    @Autowired
+    private ICursoFeignClient iCursoFeignClient;
 
     @Override
     @Transactional(readOnly = true)
     public List<Alumno> findByNombreOrApellido(String termino) {
-        return repository.findByNombreOrApellido(termino);
+        return repository.findByNombreOrApellido(termino.toUpperCase());
+    }
+
+    @Override
+    public Iterable<Alumno> findAllById(Iterable<Long> ids) {
+        return repository.findAllById(ids);
+    }
+
+    @Override
+    public void eliminarCursoAlumnoPorId(Long id) {
+        iCursoFeignClient.eliminarCursoAlumnoPorId(id);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
+        super.deleteById(id);
+        this.eliminarCursoAlumnoPorId(id);
     }
 
     /*

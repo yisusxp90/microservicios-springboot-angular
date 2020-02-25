@@ -1,0 +1,2 @@
+INSERT INTO db_microservicios_alumnos.preguntas (id, texto, examen_id) VALUES (13, 'conceptos y usos de hooks', 5);
+INSERT INTO db_microservicios_alumnos.preguntas (id, texto, examen_id) VALUES (16, 'manejo de estado global con redux', 5);

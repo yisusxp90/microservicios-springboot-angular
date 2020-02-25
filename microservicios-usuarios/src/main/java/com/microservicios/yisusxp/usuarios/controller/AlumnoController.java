@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -84,5 +85,10 @@ public class AlumnoController extends GenericController<Alumno, IAlumnoService> 
         }
         Resource imagen = new ByteArrayResource(o.get().getFoto());
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imagen);
+    }
+
+    @GetMapping("/alumnos-por-curso")
+    public ResponseEntity<?> obtenerAlumnosPorCurso(@RequestParam List<Long> ids){
+        return ResponseEntity.ok(service.findAllById(ids));
     }
 }

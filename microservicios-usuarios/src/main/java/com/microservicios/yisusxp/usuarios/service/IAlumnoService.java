@@ -6,5 +6,10 @@ import com.microservicios.yisusxp.commons.service.IGenericService;
 import java.util.List;
 
 public interface IAlumnoService  extends IGenericService<Alumno> {
+
     List<Alumno> findByNombreOrApellido(String termino);
+
+    Iterable<Alumno> findAllById(Iterable<Long> ids);
+
+    void eliminarCursoAlumnoPorId(Long id);
 }

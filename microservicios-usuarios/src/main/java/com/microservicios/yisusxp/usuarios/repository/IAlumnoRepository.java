@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface IAlumnoRepository extends PagingAndSortingRepository<Alumno, Long> {
 
-    @Query(value="select * from alumnos where nombre like %?1% or apellido like %?1%", nativeQuery = true)
+    @Query(value="select * from alumnos where upper(nombre) like %?1% or upper(apellido) like %?1%", nativeQuery = true)
     List<Alumno> findByNombreOrApellido(String termino);
 
 }

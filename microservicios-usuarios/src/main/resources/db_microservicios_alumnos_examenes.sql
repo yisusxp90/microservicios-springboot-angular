@@ -1,0 +1,1 @@
+INSERT INTO db_microservicios_alumnos.examenes (id, create_at, nombre, asignatura_id) VALUES (5, '2020-02-18 11:48:08.936000', 'examen de React', null);

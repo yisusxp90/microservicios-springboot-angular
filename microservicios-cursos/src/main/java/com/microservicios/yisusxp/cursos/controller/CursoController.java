@@ -4,7 +4,10 @@ import com.microservicios.yisusxp.commons.controller.GenericController;
 import com.microservicios.yisusxp.commons.model.Alumno;
 import com.microservicios.yisusxp.commons.model.Examen;
 import com.microservicios.yisusxp.cursos.models.Curso;
+import com.microservicios.yisusxp.cursos.models.CursoAlumno;
 import com.microservicios.yisusxp.cursos.service.ICursoService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -17,6 +20,61 @@ import java.util.stream.Collectors;
 
 @RestController
 public class CursoController extends GenericController<Curso, ICursoService> {
+
+    @GetMapping
+    @Override
+    public ResponseEntity<?> listar() {
+
+        List<Curso> cursos = ((List<Curso>) service.findAll())
+                .stream().map(curso -> {
+                    curso.getCursoAlumnos().forEach(cursoAlumno -> {
+                        Alumno alumno = new Alumno();
+                        alumno.setId(cursoAlumno.getAlumnoId());
+                        curso.addAlumno(alumno);
+                    });
+                    return curso;
+                }).collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(cursos);
+    }
+
+    @GetMapping("/{id}")
+    @Override
+    public ResponseEntity<?> ver(@PathVariable Long id) {
+        Optional<Curso> o = service.findById(id);
+        boolean exist = o.isPresent();
+        if (!exist) {
+            return ResponseEntity.notFound().build();
+        }
+        Curso curso = o.get();
+        if(!curso.getCursoAlumnos().isEmpty()){
+            List<Long> ids = curso.getCursoAlumnos().stream().map(CursoAlumno::getAlumnoId).collect(Collectors.toList());
+            List<Alumno> alumnos = (List<Alumno>) service.obtenerAlumnosPorCurso(ids);
+            curso.setAlumnos(alumnos);
+        }
+
+        return ResponseEntity.ok().body(curso);
+    }
+
+    @Override
+    @GetMapping("/pagina")
+    public ResponseEntity<?> listar(Pageable pageable) {
+        Page<Curso> cursos =  service.findAll(pageable).map(curso -> {
+            curso.getCursoAlumnos().forEach(cursoAlumno -> {
+                Alumno alumno = new Alumno();
+                alumno.setId(cursoAlumno.getAlumnoId());
+                curso.addAlumno(alumno);
+            });
+            return curso;
+        });
+        return ResponseEntity.ok().body(cursos);
+    }
+
+    @DeleteMapping("eliminar-alumno/{id}")
+    public ResponseEntity<?> eliminarCursoAlumnoPorId(@PathVariable Long id) {
+        service.eliminarCursoAlumnoPorId(id);
+        return ResponseEntity.noContent().build();
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> editar(@Valid @RequestBody Curso curso, BindingResult result, @PathVariable Long id) {
@@ -44,7 +102,12 @@ public class CursoController extends GenericController<Curso, ICursoService> {
             return ResponseEntity.notFound().build();
         }
         Curso cursoDB = o.get();
-        alumnos.forEach(cursoDB::addAlumno);
+        alumnos.forEach(alumno -> {
+            CursoAlumno cursoAlumno = new CursoAlumno();
+            cursoAlumno.setAlumnoId(alumno.getId());
+            cursoAlumno.setCurso(cursoDB);
+            cursoDB.addCursoAlumno(cursoAlumno);
+        });
         return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(cursoDB));
     }
 
@@ -56,7 +119,9 @@ public class CursoController extends GenericController<Curso, ICursoService> {
             return ResponseEntity.notFound().build();
         }
         Curso cursoDB = o.get();
-        cursoDB.removeAlumno(alumno);
+        CursoAlumno cursoAlumno = new CursoAlumno();
+        cursoAlumno.setAlumnoId(alumno.getId());
+        cursoDB.removeCursoAlumnos(cursoAlumno);
         return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(cursoDB));
     }
 
@@ -67,13 +132,15 @@ public class CursoController extends GenericController<Curso, ICursoService> {
             return ResponseEntity.notFound().build();
         }else{
             List<Long> examenesIds = (List<Long>) service.obtenerExamenesIdsConRespuestasAlumno(id);
-            List<Examen> examenes = curso.getExamenes().stream().map(examen -> {
-                if(examenesIds.contains(examen.getId())){
-                    examen.setRespondido(true);
-                }
-                return examen;
-            }).collect(Collectors.toList());
-            curso.setExamenes(examenes);
+            if(examenesIds != null && examenesIds.size() > 0) {
+                List<Examen> examenes = curso.getExamenes().stream().map(examen -> {
+                    if (examenesIds.contains(examen.getId())) {
+                        examen.setRespondido(true);
+                    }
+                    return examen;
+                }).collect(Collectors.toList());
+                curso.setExamenes(examenes);
+            }
         }
         return ResponseEntity.ok(curso);
     }

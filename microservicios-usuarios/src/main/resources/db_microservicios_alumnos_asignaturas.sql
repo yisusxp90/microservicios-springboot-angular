@@ -1,0 +1,11 @@
+INSERT INTO db_microservicios_alumnos.asignaturas (id, nombre, padre_id) VALUES (1, 'programacion frontend', null);
+INSERT INTO db_microservicios_alumnos.asignaturas (id, nombre, padre_id) VALUES (2, 'programacion Backend', null);
+INSERT INTO db_microservicios_alumnos.asignaturas (id, nombre, padre_id) VALUES (3, 'programacion frontend II', null);
+INSERT INTO db_microservicios_alumnos.asignaturas (id, nombre, padre_id) VALUES (4, 'hooks basico', 1);
+INSERT INTO db_microservicios_alumnos.asignaturas (id, nombre, padre_id) VALUES (5, 'redux basico', 1);
+INSERT INTO db_microservicios_alumnos.asignaturas (id, nombre, padre_id) VALUES (6, 'context api', 1);
+INSERT INTO db_microservicios_alumnos.asignaturas (id, nombre, padre_id) VALUES (7, 'java', 2);
+INSERT INTO db_microservicios_alumnos.asignaturas (id, nombre, padre_id) VALUES (8, 'spring', 2);
+INSERT INTO db_microservicios_alumnos.asignaturas (id, nombre, padre_id) VALUES (9, 'hibernate', 2);
+INSERT INTO db_microservicios_alumnos.asignaturas (id, nombre, padre_id) VALUES (10, 'angular intercepts', 3);
+INSERT INTO db_microservicios_alumnos.asignaturas (id, nombre, padre_id) VALUES (11, 'angular pipes', 3);

@@ -10,10 +10,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 public class ExamenController extends GenericController<Examen, IExamenService> {
+
+    @GetMapping("/respondidos-por-preguntas")
+    public ResponseEntity<?> obtenerExamenesIdsPorPreguntasIdsRespondidas(@RequestParam List<Long> preguntaIds){
+        preguntaIds.forEach(ids -> {
+            System.out.println(ids);
+        });
+        return ResponseEntity.ok().body(this.service.findExamenesIdsConRespuestasByPreguntIds(preguntaIds));
+    }
 
     @PutMapping("/{id}")
     // el BindingResult result debe ir despues del entity siempre

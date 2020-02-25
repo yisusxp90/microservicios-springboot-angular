@@ -1,9 +1,11 @@
 package com.microservicios.yisusxp.cursos.clients;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+@Service
 @FeignClient(name = "microservicios-respuestas")
 public interface IRespuestaFeignClient {
 

@@ -1,14 +1,16 @@
 package com.microservicios.yisusxp.respuestas;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableEurekaClient
-@EntityScan({"com.microservicios.yisusxp.commons.model",
-		"com.microservicios.yisusxp.respuestas.model"})
+@EnableFeignClients
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class MicroserviciosRespuestasApplication {
 
 	public static void main(String[] args) {
