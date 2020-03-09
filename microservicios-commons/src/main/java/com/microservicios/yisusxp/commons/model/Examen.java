@@ -5,14 +5,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "examenes")
-public class Examen {
+public class Examen implements Serializable {
 
+    private static final long serialVersionUID = -5132436110454490932L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -26,9 +28,15 @@ public class Examen {
     @OneToMany(mappedBy = "examen",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pregunta> preguntas;
 
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
-    private Asignatura asignatura;
+    private Asignatura asignaturaPadre;
+
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    private Asignatura asignaturaHija;
     @Transient
     private boolean respondido;
 
@@ -92,12 +100,20 @@ public class Examen {
         this.respondido = respondido;
     }
 
-    public Asignatura getAsignatura() {
-        return asignatura;
+    public Asignatura getAsignaturaPadre() {
+        return asignaturaPadre;
     }
 
-    public void setAsignatura(Asignatura asignatura) {
-        this.asignatura = asignatura;
+    public void setAsignaturaPadre(Asignatura asignaturaPadre) {
+        this.asignaturaPadre = asignaturaPadre;
+    }
+
+    public Asignatura getAsignaturaHija() {
+        return asignaturaHija;
+    }
+
+    public void setAsignaturaHija(Asignatura asignaturaHija) {
+        this.asignaturaHija = asignaturaHija;
     }
 
     @Override

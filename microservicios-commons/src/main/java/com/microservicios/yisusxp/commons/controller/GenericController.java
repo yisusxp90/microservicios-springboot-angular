@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 
 // E es el objeto o entity y S es el service
+// @CrossOrigin({"http://localhost:4200"})
 public class GenericController<E, S extends IGenericService<E>> {
 
     @Autowired

@@ -1,0 +1,106 @@
+<mat-card>
+
+  <mat-card-header *ngIf="curso">
+    <mat-card-title>
+      Alumnos del curso: {{curso.nombre}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+
+    <mat-tab-group dynamicHeight [(selectedIndex)]="tavIndex">
+      <mat-tab label="Asignar Alumnos">
+
+          <mat-form-field style="width:75%;" class="mx-3 mt-3">
+            <input matInput placeholder="Buscar Alumnos" (keyup)="filtrarAlumnosPorNombre($event.target.value)">
+          </mat-form-field>
+
+          <mat-card ngClass="alert alert-info" *ngIf="alumnosAsignar.length === 0" class="alert lert-info">Sin Resultados</mat-card>
+
+          <table *ngIf="alumnosAsignar?.length > 0" style="width:75%;" mat-table [dataSource]="alumnosAsignar" class="mat-elevation-z8 mx-3">
+
+            <ng-container matColumnDef="seleccion">
+              <th mat-header-cell *matHeaderCellDef>
+                <mat-checkbox (change)="$event ? seleccionarDesSeleccionarTodos(): null"
+                              [checked]="seleccion.hasValue() && estanTodosSeleccionados()"
+                              [indeterminate]="seleccion.hasValue() && !estanTodosSeleccionados()">
+
+                </mat-checkbox>
+              </th>
+              <td mat-cell *matCellDef="let alumno">
+                <mat-checkbox (click)="$event.stopPropagation()"
+                              (change)="$event ? seleccion.toggle(alumno) : null"
+                              [checked]="seleccion.isSelected(alumno)">
+
+                </mat-checkbox>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="nombre">
+              <th mat-header-cell *matHeaderCellDef> Nombre </th>
+              <td mat-cell *matCellDef="let alumno"> {{alumno.nombre}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="apellido">
+              <th mat-header-cell *matHeaderCellDef> apellido </th>
+              <td mat-cell *matCellDef="let alumno"> {{alumno.apellido}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="mostrarColumnas"></tr>
+            <tr mat-row *matRowDef="let alumno; columns: mostrarColumnas;"
+                (click)="seleccion.toggle(alumno)"></tr>
+          </table>
+
+          <button mat-raised-button color="primary" class="m-4" (click)="asignar()" [disabled]="!seleccion.hasValue()">Asignar</button>
+          <button mat-raised-button color="primary" routerLink="/cursos">Volver</button>
+      </mat-tab>
+
+      <mat-tab label="Alumnos Asignados">
+
+        <!-- dataSource contiene los alumnosAsignados -->
+        <table *ngIf="alumnosAsignados?.length > 0" style="width:75%;" mat-table [dataSource]="dataSource" class="mat-elevation-z8 m-3">
+
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef> ID </th>
+            <td mat-cell *matCellDef="let alumno"> {{alumno.id}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef> Nombre </th>
+            <td mat-cell *matCellDef="let alumno"> {{alumno.nombre}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="apellido">
+            <th mat-header-cell *matHeaderCellDef> apellido </th>
+            <td mat-cell *matCellDef="let alumno"> {{alumno.apellido}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef> Email </th>
+            <td mat-cell *matCellDef="let alumno"> {{alumno.email}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="eliminar">
+            <th mat-header-cell *matHeaderCellDef> Eliminar </th>
+            <td mat-cell *matCellDef="let alumno">
+              <button mat-mini-fab color="warn" (click)="eliminaralumno(alumno)">X</button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="mostrarColumnasAlumnosAsignados"></tr>
+          <tr mat-row *matRowDef="let alumno; columns: mostrarColumnasAlumnosAsignados;"></tr>
+        </table>
+
+        <mat-paginator
+                       [pageSize]="3"
+                       showFirstLastButtons
+                       class="float-left mx-3"
+        >
+        </mat-paginator>
+
+      </mat-tab>
+    </mat-tab-group>
+
+  </mat-card-content>
+
+</mat-card>

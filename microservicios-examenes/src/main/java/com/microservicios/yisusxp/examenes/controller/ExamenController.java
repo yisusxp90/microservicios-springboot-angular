@@ -3,6 +3,7 @@ package com.microservicios.yisusxp.examenes.controller;
 import com.microservicios.yisusxp.commons.controller.GenericController;
 import com.microservicios.yisusxp.commons.model.Asignatura;
 import com.microservicios.yisusxp.commons.model.Examen;
+import com.microservicios.yisusxp.commons.model.Pregunta;
 import com.microservicios.yisusxp.examenes.services.IExamenService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +11,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class ExamenController extends GenericController<Examen, IExamenService> {
@@ -40,13 +43,16 @@ public class ExamenController extends GenericController<Examen, IExamenService> 
 
         Examen examenDB = o.get();
         examenDB.setNombre(examen.getNombre());
-
-        examenDB.getPreguntas()
+        examenDB.setAsignaturaHija(examen.getAsignaturaHija());
+        examenDB.setAsignaturaPadre(examen.getAsignaturaPadre());
+        List<Pregunta> eliminadas = examenDB.getPreguntas()
                 .stream()
                 .filter(pregunta -> !examen.getPreguntas().contains(pregunta))
-                .forEach(examenDB::removePregunta);
-        /*
-        List<Pregunta> eliminadas = new ArrayList<>();
+                .collect(Collectors.toList());
+
+        eliminadas.forEach(examenDB::removePregunta);
+
+        /*List<Pregunta> eliminadas = new ArrayList<>();
         examenDB.getPreguntas().forEach(pregunta -> {
             if(!examen.getPreguntas().contains(pregunta)){
                 eliminadas.add(pregunta);
@@ -54,15 +60,14 @@ public class ExamenController extends GenericController<Examen, IExamenService> 
         });
         eliminadas.forEach(examenDB::removePregunta);
 
-        examenDB.setPreguntas(examen.getPreguntas());
-        */
+        examenDB.setPreguntas(examen.getPreguntas());*/
 
         examenDB.setPreguntas(examen.getPreguntas());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(examenDB));
     }
 
-    @GetMapping("/examen/{termino}")
+    @GetMapping("/filtrar/{termino}")
     public ResponseEntity<?> buscarExamenPorNombre(@PathVariable String termino) {
         return ResponseEntity.ok(this.service.findExamenByNombre(termino));
     }

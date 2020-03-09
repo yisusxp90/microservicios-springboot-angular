@@ -1,0 +1,57 @@
+<div class="card bg-light mb-3">
+  <div class="card-header">{{titulo}}</div>
+  <div class="card-body">
+
+    <button class="btn btn-primary my-2" routerLink="/alumnos/form">Crear</button>
+
+    <div class="alert alert-info" *ngIf="lista?.length === 0">
+      No hay alumnos registrados.
+    </div>
+
+    <table class="table table-hover table-striped" *ngIf="lista?.length > 0">
+      <thead>
+      <tr>
+        <th>id</th>
+        <th>foto</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Email</th>
+        <th>Fecha</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let alumno of lista">
+        <td>{{alumno.id}}</td>
+        <td>
+          <img
+             *ngIf="alumno.fotoHashCode"
+             [src]="baseURL + '/uploads/img/' + alumno.id + '?fotoHashCode=' + alumno.fotoHashCode"
+             class="img-thumbnail rounded" style="width: 50px; cursor: pointer" >
+          <img
+            *ngIf="!alumno.fotoHashCode"
+            [src]="'/assets/images/nouser.jpg'"
+            class="img-thumbnail rounded" style="width: 50px; cursor: pointer" >
+        </td>
+        <td>{{alumno.nombre}}</td>
+        <td>{{alumno.apellido}}</td>
+        <td>{{alumno.email}}</td>
+        <td>{{alumno.createAt | date: 'yyyy-MM-dd'}}</td>
+        <td>
+          <button class="btn btn-secondary btn-sm" [routerLink]="['/alumnos/form', alumno.id]">Editar</button>
+          <button class="btn btn-danger btn-sm ml-2" (click)="eliminar(alumno)">Eliminar</button>
+          <button class="btn btn-primary btn-sm ml-2" [routerLink]="['/alumnos/responder-examen', alumno.id]">Responder</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <mat-paginator [length]="totalRegistros"
+                   [pageSize]="totalPorPagina"
+                   [pageIndex]="paginaActual"
+                    (page)="paginar($event)"
+                    showFirstLastButtons
+                    class="float-left mx-2"
+                    >
+    </mat-paginator>
+  </div>
+</div>
+
